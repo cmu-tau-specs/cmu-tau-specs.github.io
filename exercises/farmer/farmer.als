@@ -44,22 +44,22 @@ sig State {
  * In the initial state, all objects are on the near side.
  */
 fact initialState {
-   let s0 = ord/first |	// s0 is the initial state
-     s0.near = Object && no s0.far
+   let s_init = ord/first |	// s_init is the initial state
+     s_init.near = Object && no s_init.far
 }
 
 /**
  * Constrains at most one item to move from 'from' to 'to'.
  * Also constrains which objects get eaten.
  */
-pred crossRiver [from, from', to, to': set Object] {
+pred crossRiver [from0, from1, to0, to1: set Object] {
    // either the Farmer takes no items
-   (from' = from - Farmer - from'.eats and
-    to' = to + Farmer) or
+   (from1 = from0 - Farmer - from1.eats and
+    to1 = to0 + Farmer) or
     // or the Farmer takes item "x"
-    (some x : from - Farmer | 
-       from' = from - Farmer - x - from'.eats and
-       to' = to + Farmer)
+    (some x : from0 - Farmer | 
+       from1 = from0 - Farmer - x - from1.eats and
+       to1 = to0 + Farmer)
 }
 
 /**
@@ -67,9 +67,9 @@ pred crossRiver [from, from', to, to': set Object] {
  */
 fact stateTransition {
   // s' is the next state of s
-  all s: State, s': ord/next[s] {
-    Farmer in s.near implies crossRiver[s.near, s'.near, s.far, s'.far]
-    Farmer in s.far implies crossRiver[s.far, s'.far, s.near, s'.near]
+  all s0: State, s1: ord/next[s0] {
+    Farmer in s0.near implies crossRiver[s0.near, s1.near, s0.far, s1.far]
+    Farmer in s0.far implies crossRiver[s0.far, s1.far, s0.near, s1.near]
   }
 }
 
